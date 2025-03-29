@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from decouple import config, Csv
 from datetime import timedelta
-
+from django.core import management
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -92,8 +92,8 @@ DATABASES = {
         "NAME": config("NAME_DB"),
         "USER": config("USER_DB"),
         "PASSWORD": config("PASSWORD_DB"),
-        "HOST": config("HOST_DB"),
-        "PORT": config("PORT_DB"),
+        "HOST": 'db',
+        "PORT": 5432,
         "OPTIONS": {
             "options": "-c search_path=public",
         },
@@ -197,3 +197,16 @@ SIMPLE_JWT = {
 #Celery
 
 CELERY_BROKER_URL = config('CELERY_BROKER_URL')
+
+if os.environ.get('DJANGO_SUPERUSER_PASSWORD'):
+    try:
+        management.call_command(
+            'createsuperuser',
+            username=os.environ['DJANGO_SUPERUSER_NAME'],
+            email=os.environ['DJANGO_SUPERUSER_EMAIL'],
+            password=os.environ['DJANGO_SUPERUSER_PASSWORD'],
+            noinput=True
+        )
+        print("Superusuário criado com sucesso!")
+    except Exception as e:
+        print(f"Erro ao criar superusuário: {e}")
