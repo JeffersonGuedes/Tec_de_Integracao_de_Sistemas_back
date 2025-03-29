@@ -210,3 +210,7 @@ if os.environ.get('DJANGO_SUPERUSER_PASSWORD'):
         print("Superusuário criado com sucesso!")
     except Exception as e:
         print(f"Erro ao criar superusuário: {e}")
+
+
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
