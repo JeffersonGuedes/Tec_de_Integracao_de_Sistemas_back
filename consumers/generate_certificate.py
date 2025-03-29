@@ -12,7 +12,11 @@ def generate_certificate(ch, method, properties, body):
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 if __name__ == '__main__':
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host=config('RABBITMQ_HOST'), port=int(config('RABBITMQ_PORT'))))
+    connection = pika.BlockingConnection(
+        pika.URLParameters(
+            f"amqps://{config('RABBITMQ_USER')}:{config('RABBITMQ_PASSWORD')}@{config('RABBITMQ_HOST')}:{config('RABBITMQ_PORT')}/{config('RABBITMQ_VIRTUAL_HOST', default='vwikzqcb')}"
+        )
+    )
 
     channel = connection.channel()
 

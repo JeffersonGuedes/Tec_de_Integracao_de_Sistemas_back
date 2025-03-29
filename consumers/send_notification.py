@@ -12,8 +12,12 @@ def send_notification(ch, method, properties, body):
 
 
 if __name__ == '__main__':
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host=config('RABBITMQ_HOST'), port=int(config('RABBITMQ_PORT'))))
-
+    connection = pika.BlockingConnection(
+        pika.URLParameters(
+            f"amqps://{config('RABBITMQ_USER')}:{config('RABBITMQ_PASSWORD')}@{config('RABBITMQ_HOST')}:{config('RABBITMQ_PORT')}/{config('RABBITMQ_VIRTUAL_HOST', default='vwikzqcb')}"
+        )
+    )
+    
     channel = connection.channel()
 
     channel.queue_declare(queue='send_notification', durable=True)
