@@ -55,7 +55,6 @@ services:
       - .:/app
     depends_on:
       - rabbitmq
-      - db
     environment:
       - RABBITMQ_HOST:${RABBITMQ_HOST}
       - RABBITMQ_PORT:${RABBITMQ_PORT}
@@ -102,5 +101,4 @@ networks:
     driver: bridge
 
 volumes:
-  postgres_data:
   rabbitmq_data:
