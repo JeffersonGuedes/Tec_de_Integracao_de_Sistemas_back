@@ -4,8 +4,8 @@ echo "🚀 Iniciando Gunicorn..."
 gunicorn --bind 0.0.0.0:8000 core.wsgi:application &
 
 echo "🔄 Iniciando Celery Worker..."
-celery -A your_project beat --uid= &
-celery -A your_project worker --uid= &
+celery -A core beat --uid= &
+celery -A core worker --uid= &
 
 echo "📨 Iniciando Consumer: generate_certificate.py..."
 python /app/consumers/generate_certificate.py &
