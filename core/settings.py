@@ -92,8 +92,8 @@ DATABASES = {
         "NAME": config("NAME_DB"),
         "USER": config("USER_DB"),
         "PASSWORD": config("PASSWORD_DB"),
-        "HOST": 'db',
-        "PORT": 5432,
+        "HOST": config("HOST_DB"),
+        "PORT": config("PORT_DB"),
         "OPTIONS": {
             "options": "-c search_path=public",
         },
