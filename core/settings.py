@@ -197,20 +197,3 @@ SIMPLE_JWT = {
 #Celery
 
 CELERY_BROKER_URL = config('CELERY_BROKER_URL')
-
-if os.environ.get('DJANGO_SUPERUSER_PASSWORD'):
-    try:
-        management.call_command(
-            'createsuperuser',
-            username=os.environ['DJANGO_SUPERUSER_NAME'],
-            email=os.environ['DJANGO_SUPERUSER_EMAIL'],
-            password=os.environ['DJANGO_SUPERUSER_PASSWORD'],
-            noinput=True
-        )
-        print("Superusuário criado com sucesso!")
-    except Exception as e:
-        print(f"Erro ao criar superusuário: {e}")
-
-
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')

@@ -6,6 +6,20 @@ from django.db import connections
 from django.db.utils import OperationalError
 from django.apps import apps
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
+application = get_wsgi_application()
+
+if os.getenv('RAILWAY_ENVIRONMENT') and os.getenv('DJANGO_SUPERUSER_PASSWORD'):
+    try:
+        call_command(
+            'createsuperuser',
+            username=os.getenv('DJANGO_SUPERUSER_NAME', 'admin'),
+            email=os.getenv('DJANGO_SUPERUSER_EMAIL', 'admin@example.com'),
+            password=os.getenv('DJANGO_SUPERUSER_PASSWORD'),
+            noinput=True
+        )
+    except Exception as e:
+        print(f"Erro ao criar superusuário: {e}")
 
 def aplicar_migracoes():
     try:
