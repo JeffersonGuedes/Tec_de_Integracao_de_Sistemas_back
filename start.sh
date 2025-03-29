@@ -6,5 +6,3 @@ python /consumers/generate_certificate.py &
 python /consumers/send_notification.py &
 
 tail -f /dev/null
-
-docker-compose up --build
