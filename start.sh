@@ -1,19 +1,12 @@
-#!/bin/sh
+adduser -D celeryuser
 
-echo "🚀 Iniciando Gunicorn..."
-gunicorn --bind 0.0.0.0:8000 core.wsgi:application &
+chown -R celeryuser:celeryuser /app
 
-echo "🔄 Iniciando Celery Worker..."
-celery -A core worker -l INFO &
+su-exec celeryuser gunicorn --bind 0.0.0.0:8000 core.wsgi:application &
+su-exec celeryuser celery -A core worker -l INFO --uid=celeryuser --gid=celeryuser &
+su-exec celeryuser celery -A core beat -l INFO --uid=celeryuser --gid=celeryuser &
 
-echo "⏰ Iniciando Celery Beat..."
-celery -A core beat -l INFO &
+su-exec celeryuser python /app/consumers/generate_certificate.py &
+su-exec celeryuser python /app/consumers/send_notification.py &
 
-echo "📨 Iniciando Consumer: generate_certificate.py..."
-python /app/consumers/generate_certificate.py &
-
-echo "📩 Iniciando Consumer: send_notification.py..."
-python /app/consumers/send_notification.py &
-
-echo "✅ Todos os processos foram iniciados!"
-while :; do sleep 3600; done
+tail -f /dev/null

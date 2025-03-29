@@ -1,16 +1,6 @@
 version: '3.8'
 
 services:
-  rabbitmq:
-    image: rabbitmq:4.0-management-alpine
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    networks:
-      - app-network
-
   django:
     build: .
     command: gunicorn --bind 0.0.0.0:8000 core.wsgi:application
@@ -18,8 +8,6 @@ services:
       - .:/app
     ports:
       - "8000:8000"
-    depends_on:
-      - rabbitmq
     environment:
       - SECRET_KEY=${SECRET_KEY}
       - DEBUG=${DEBUG}
@@ -53,8 +41,6 @@ services:
     command: python /consumers/generate_certificate.py python /consumers/send_notification.py
     volumes:
       - .:/app
-    depends_on:
-      - rabbitmq
     environment:
       - RABBITMQ_HOST:${RABBITMQ_HOST}
       - RABBITMQ_PORT:${RABBITMQ_PORT}
@@ -66,8 +52,6 @@ services:
     command: celery -A core beat -l INFO
     volumes:
       - .:/app
-    depends_on:
-      - rabbitmq
     environment:
       - SECRET_KEY=${SECRET_KEY}
       - DEBUG=${DEBUG}
