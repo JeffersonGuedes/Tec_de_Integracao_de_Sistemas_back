@@ -1,22 +1,17 @@
-echo "🔧 Configurando permissões..."
-chown -R celeryuser:celeryuser /app
+#!/bin/sh
 
-echo "🚀 Iniciando serviços como celeryuser..."
+echo "🚀 Iniciando Gunicorn..."
+gunicorn --bind 0.0.0.0:8000 core.wsgi:application &
 
-gosu celeryuser gunicorn --bind 0.0.0.0:8000 core.wsgi:application &
+echo "🔄 Iniciando Celery Worker..."
+celery -A your_project beat --uid= &
+celery -A your_project worker --uid= &
 
-gosu celeryuser celery -A core worker -l INFO --uid=celeryuser --gid=celeryuser &
+echo "📨 Iniciando Consumer: generate_certificate.py..."
+python /app/consumers/generate_certificate.py &
 
-gosu celeryuser celery -A core beat -l INFO --uid=celeryuser --gid=celeryuser &
+echo "📩 Iniciando Consumer: send_notification.py..."
+python /app/consumers/send_notification.py &
 
-gosu celeryuser python /app/consumers/generate_certificate.py &
-gosu celeryuser python /app/consumers/send_notification.py &
-
-echo "✅ Todos os serviços iniciados!"
-while true; do
-    sleep 60
-    if ! pgrep -f "gunicorn|celery" > /dev/null; then
-        echo "⚠️ Nenhum processo principal encontrado, encerrando..."
-        exit 1
-    fi
-done
+echo "✅ Todos os processos foram iniciados!"
+while :; do sleep 3600; done

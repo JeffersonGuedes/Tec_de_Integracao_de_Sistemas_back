@@ -3,7 +3,6 @@ FROM python:3.11-slim
 RUN apt-get update && apt-get install -y \
     libpq-dev gcc \
     dos2unix \
-    gosu \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -17,9 +16,8 @@ COPY start.sh /start.sh
 RUN dos2unix /start.sh && \
     chmod +x /start.sh
 
-RUN groupadd -r celeryuser && \
-    useradd -r -g celeryuser celeryuser && \
-    chown -R celeryuser:celeryuser /app
+ENV PYTHONPATH=/app \
+    PYTHONUNBUFFERED=1
 
 EXPOSE 8000
 
