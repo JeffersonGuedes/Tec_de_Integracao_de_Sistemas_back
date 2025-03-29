@@ -1,8 +1,10 @@
-gunicorn --bind 0.0.0.0:8000 core.wsgi:application &
+# gunicorn --bind 0.0.0.0:8000 core.wsgi:application &
 
-celery -A core beat -l INFO &
+# celery -A core beat -l INFO &
 
-python /consumers/generate_certificate.py &
-python /consumers/send_notification.py &
+# python /consumers/generate_certificate.py &
+# python /consumers/send_notification.py &
 
-tail -f /dev/null
+# tail -f /dev/null
+
+docker-compose up --build
