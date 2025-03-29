@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_DB=${NAME_DB}
+      - POSTGRES_USER=${USER_DB}
+      - POSTGRES_PASSWORD=${PASSWORD_DB}
+    ports:
+      - "${PORT_DB}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql@16/data
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: rabbitmq:4.0-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - app-network
+
+  django:
+    build: .
+    command: gunicorn --bind 0.0.0.0:8000 core.wsgi:application
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - rabbitmq
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=${DEBUG}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - NAME_DB=${NAME_DB}
+      - USER_DB=${USER_DB}
+      - PASSWORD_DB=${PASSWORD_DB}
+      - HOST_DB=db
+      - PORT_DB=5432
+      - EMAIL_BACKEND=${EMAIL_BACKEND}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_USE_TLS=${EMAIL_USE_TLS}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+    networks:
+      - app-network
+
+  generate_certificate_and_send_notification:
+    build: .
+    command: python /consumers/generate_certificate.py python /consumers/send_notification.py
+    volumes:
+      - .:/app
+    depends_on:
+      - rabbitmq
+      - db
+    environment:
+      - RABBITMQ_HOST:${RABBITMQ_HOST}
+      - RABBITMQ_PORT:${RABBITMQ_PORT}
+    networks:
+      - app-network
+
+  celery_beat:
+    build: .
+    command: celery -A core beat -l INFO
+    volumes:
+      - .:/app
+    depends_on:
+      - rabbitmq
+      - db
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=${DEBUG}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - FRONT_HOSTS=${FRONT_HOSTS}
+      - NAME_DB=${NAME_DB}
+      - USER_DB=${USER_DB}
+      - PASSWORD_DB=${PASSWORD_DB}
+      - HOST_DB=${HOST_DB}
+      - PORT_DB=${PORT_DB}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_USE_TLS=${EMAIL_USE_TLS}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
