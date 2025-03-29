@@ -89,17 +89,13 @@ AUTH_USER_MODEL = "home.CustomUser"
 DATABASES = {
 "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("NAME_DB"),
-        "USER": config("USER_DB"),
-        "PASSWORD": config("PASSWORD_DB"),
-        "HOST": config("HOST_DB"),
-        "PORT": config("PORT_DB"),
-        "OPTIONS": {
-            "options": "-c search_path=public",
-        },
+        "NAME": config("PGDATABASE"),
+        "USER": config("PGUSER"),
+        "PASSWORD": config("PGPASSWORD"),
+        "HOST": config("PGHOST"),
+        "PORT": config("PGPORT"),
     }
 }
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
