@@ -1,12 +1,22 @@
-adduser -D celeryuser
-
+echo "🔧 Configurando permissões..."
 chown -R celeryuser:celeryuser /app
 
-su-exec celeryuser gunicorn --bind 0.0.0.0:8000 core.wsgi:application &
-su-exec celeryuser celery -A core worker -l INFO --uid=celeryuser --gid=celeryuser &
-su-exec celeryuser celery -A core beat -l INFO --uid=celeryuser --gid=celeryuser &
+echo "🚀 Iniciando serviços como celeryuser..."
 
-su-exec celeryuser python /app/consumers/generate_certificate.py &
-su-exec celeryuser python /app/consumers/send_notification.py &
+gosu celeryuser gunicorn --bind 0.0.0.0:8000 core.wsgi:application &
 
-tail -f /dev/null
+gosu celeryuser celery -A core worker -l INFO --uid=celeryuser --gid=celeryuser &
+
+gosu celeryuser celery -A core beat -l INFO --uid=celeryuser --gid=celeryuser &
+
+gosu celeryuser python /app/consumers/generate_certificate.py &
+gosu celeryuser python /app/consumers/send_notification.py &
+
+echo "✅ Todos os serviços iniciados!"
+while true; do
+    sleep 60
+    if ! pgrep -f "gunicorn|celery" > /dev/null; then
+        echo "⚠️ Nenhum processo principal encontrado, encerrando..."
+        exit 1
+    fi
+done
