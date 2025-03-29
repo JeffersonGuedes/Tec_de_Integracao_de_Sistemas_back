@@ -12,10 +12,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 COPY start.sh /start.sh
-RUN chmod +x /start.sh
-
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONPATH=/app
+RUN dos2unix /start.sh && \
+    chmod +x /start.sh
 
 EXPOSE 8000
 
