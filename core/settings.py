@@ -92,8 +92,8 @@ DATABASES = {
         "NAME": config("NAME_DB"),
         "USER": config("USER_DB"),
         "PASSWORD": config("PASSWORD_DB"),
-        "HOST": config("HOST_DB"),
-        "PORT": config("PORT_DB"),
+        "HOST": 'db',
+        "PORT": 5432,
         "OPTIONS": {
             "options": "-c search_path=public",
         },
@@ -200,3 +200,7 @@ CELERY_BROKER_URL = config('CELERY_BROKER_URL')
 
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
