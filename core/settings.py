@@ -131,8 +131,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-        os.path.join(BASE_DIR,"home", "static")
-    ]
+     os.path.join(BASE_DIR,"home", "static")
+]
 
 STATIC_ROOT = BASE_DIR / "static" 
 
@@ -195,7 +195,7 @@ SIMPLE_JWT = {
 CELERY_BROKER_URL = config('CELERY_BROKER_URL')
 
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
+# CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', '').split(',')
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SESSION_COOKIE_SECURE = True

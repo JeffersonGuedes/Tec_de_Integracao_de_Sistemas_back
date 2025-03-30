@@ -34,7 +34,6 @@ urlpatterns = [
 
     path('api/v1/', include("home.urls")),
     path("captcha/", include("captcha.urls")),
-    path('__debug__/', include('debug_toolbar.urls')),
     path('api/v1/certificate/', CertificateView.as_view(), name='certificate'),
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
@@ -44,3 +43,6 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += [
+      path('__debug__/', include('debug_toolbar.urls')),  
+    ]
