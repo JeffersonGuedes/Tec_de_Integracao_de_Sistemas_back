@@ -13,22 +13,9 @@ def send_notification(ch, method, properties, body):
 
 
 if __name__ == '__main__':
-    ssl_context = ssl.create_default_context()
-    ssl_context.check_hostname = False
-    ssl_context.verify_mode = ssl.CERT_NONE
-
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters(
-            host=config('RABBITMQ_HOST'),
-            port=int(config('RABBITMQ_PORT')),
-            virtual_host=config('RABBITMQ_HOST', default='vwikzqcb'),
-            credentials=pika.PlainCredentials(
-                config('RABBITMQ_USER', default='vwikzqcb'),
-                config('RABBITMQ_PASSWORD')
-            ),
-            ssl_options=pika.SSLOptions(context=ssl_context)
-        )
-    )
+    
+    connection_url = "amqps://vwikzqcb:fTW3QlPy2o6Ob-OskLxIxyBTP2-qpdf6@jackal.rmq.cloudamqp.com/vwikzqcb"
+    connection = pika.BlockingConnection(pika.URLParameters(connection_url))
 
     channel = connection.channel()
 
