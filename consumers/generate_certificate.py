@@ -13,7 +13,7 @@ def generate_certificate(ch, method, properties, body):
 
 if __name__ == '__main__':
     
-    connection_url = "amqps://vwikzqcb:fTW3QlPy2o6Ob-OskLxIxyBTP2-qpdf6@jackal.rmq.cloudamqp.com/vwikzqcb"
+    connection_url = "amqps://vwikzqcb:fTW3QlPy2o6Ob-OskLxIxyBTP2-qpdf6@jackal.rmq.cloudamqp.com/vwikzqcb/"
     connection = pika.BlockingConnection(pika.URLParameters(connection_url))
 
     channel = connection.channel()
